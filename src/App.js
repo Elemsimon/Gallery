@@ -87,6 +87,7 @@ function App() {
   },
    []);
    const db = config.firestore();
+   
    //Creating a basic Users by adding data to the store.
    db.collection("users").add({
        FirstName: fname,
