@@ -5,7 +5,7 @@ import Title from './Title';
 import UploadForm from './UploadForm';
 import ImageGrid from './ImageGrid';
 import Modal from './Modal';
-import Profile from './Profile';
+
 
 
 function Home({handleLogout, user}) {

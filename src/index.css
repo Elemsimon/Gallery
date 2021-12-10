@@ -39,7 +39,25 @@ nav {
   align-items: center;
   letter-spacing: 2px;
   height: 70px;
+  text-decoration: none;
+ 
+}
+.left h1 {
+ 
+  text-align: left;
+}
+.right {
+  text-align: right;
+  align-items: right;
+  padding-left: 75%;
   justify-content: space-between;
+}
+.right a {
+  padding-right: 10px;
+  color: var(--primary);
+}
+.right a:hover {
+  color: var(--primary);
 }
 
 /* Login button */
@@ -228,4 +246,15 @@ label:hover{
 }
 div a{
   text-decoration: none;
+}
+/* Profile */
+.profile_container {
+  display: flex;
+  align-items: center;
+}
+.text_container {
+  flex-grow: 1;
+}
+.text_container h3 {
+  text-align: left;
 }

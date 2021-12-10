@@ -1,30 +1,90 @@
-import React from 'react';
+import React,{useState} from 'react';
 import loginIcon from '../images/user.svg'
 import uiImg from '../images/login.svg';
-
+import { auth, db } from "../firebase/config";
+import { useHistory } from 'react-router-dom';
+import {config} from '../firebase/config';
 import { Col, Container, Row, Button, Form } from 'react-bootstrap';
 
 
 const Login = (props) => {
-    const{
-       
-        email,
-        setEmail,
-        password,
-        setPassword,
-        handleLogin,
-        handleSignup,
+    const{ 
         hasAccount,
         setHasAccount,
         emailError,
         passwordError,
-        fname,
+        clearErrors,
+        setEmailError,
+        setPasswordError,
         setFname,
-        lname,
-        setLname,
-        number,
-        setNumber
     } = props;
+
+    const [data, setData] = useState({
+        fname: '',
+        lname: '',
+        email: '',
+        password: '',
+        error: '',
+    });
+
+    const history = useHistory();
+    const { fname, lname, email, password } = data;
+
+    const handleChange = e => {
+        setData({...data, [e.target.name]: e.target.value })
+    }
+    
+    const handleSignup = async (e) => {
+        e.preventDefault();
+        setData({ ...data, error: null, loading: true});
+        if( !fname || !lname|| !email || !password){
+            setData({ ...data, error: "All fields are required"})
+        }
+        try {
+            const result = await auth.createUserWithEmailAndPassword(
+                email,
+                password
+            );
+            await db.collection("users").doc(result.user.uid).set({
+                uid: result.user.uid,
+                fname,
+                lname,
+                email,
+            });
+            setData({
+                fname:"",
+                lname:"",
+                email:"",
+                password:"",
+                error: null,
+              
+
+            });
+        } catch (err) {
+            setData({...data, error: err.message});
+        }
+    };
+
+
+    const handleLogin = () => {
+        clearErrors();
+        config
+          .auth()
+          .signInWithEmailAndPassword(email, password)
+          .catch((err) => {
+            switch (err.code) {
+              case "auth/invalid-email":
+              case "auth/user-disabled":
+              case "auth/user-not-found":
+                setEmailError(err.message);
+                break;
+              case "auth/wrong-password":
+                setPasswordError(err.message);
+                break;
+            }
+        });
+      };
+      
     return (
         <div>
             <Container className="mt-5">
@@ -37,12 +97,12 @@ const Login = (props) => {
                                     <>
                                      
                                         <Form.Group className="mb-3" controlId="formBasicEmail">
-                                        <Form.Control type="email" required placeholder="Enter email" value={email} onChange = {(e) => setEmail(e.target.value)} />
+                                        <Form.Control type="email" required name="email" placeholder="Enter email" value={email} onChange = {handleChange} />
                                         <p className="errorMsg">{emailError}</p>
                                         </Form.Group>
 
                                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                                        <Form.Control type="password" required placeholder="Password" value={password} onChange = {(e) => setPassword(e.target.value)}  />
+                                        <Form.Control type="password" required placeholder="Password" name="password" value={password} onChange = {handleChange} />
                                         <p className="errorMsg">{passwordError}</p>
                                         </Form.Group>
 
@@ -58,28 +118,22 @@ const Login = (props) => {
                                     <>
                                          
                                         <Form.Group className="mb-3" controlId="formBasicText">
-                                            <Form.Control type="text"  placeholder="Enter first name" required value={fname} onChange = {(e) => setFname(e.target.value)} />
-                                            
+                                            <Form.Control type="text"  placeholder="Enter first name" required name="fname" value={fname} onChange = {handleChange} />
                                         </Form.Group>
 
                                         <Form.Group className="mb-3" controlId="formBasicText">
-                                            <Form.Control type="text" required placeholder="Enter last name"  value={lname} onChange = {(e) => setLname(e.target.value)} />
-                                            
-                                        </Form.Group>
-
-                                        <Form.Group className="mb-3" controlId="formBasicText">
-                                            <Form.Control type="text" required placeholder="Enter phone number" value={number} onChange = {(e) => setNumber(e.target.value)} />
+                                            <Form.Control type="text" required placeholder="Enter last name" name="lname"  value={lname} onChange = {handleChange} />
                                             
                                         </Form.Group>
 
                                         <Form.Group className="mb-3" controlId="formBasicEmail">
-                                            <Form.Control type="email" required placeholder="Enter email" value={email} onChange = {(e) => setEmail(e.target.value)} />
-                                            <p className="errorMsg">{emailError}</p>
+                                            <Form.Control type="email" required placeholder="Enter email" name="email" value={email} onChange = {handleChange} />
+                                            
                                         </Form.Group>
 
                                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                                            <Form.Control type="password" required placeholder="Password" value={password} onChange = {(e) => setPassword(e.target.value)}  />
-                                            <p className="errorMsg">{passwordError}</p>
+                                            <Form.Control type="password" required placeholder="Password" name="password" value={password} onChange = {handleChange}  />
+                                            
                                         </Form.Group>
                                     
                                         <Button className="out" variant="primary btn-block" onClick = {handleSignup}> Sign up </Button>
@@ -93,11 +147,7 @@ const Login = (props) => {
                                 ) }
                             </div>
 
-                            {/* <Button variant="primary btn-block" type="submit">Login</Button> */}
-
-                           {/*  <div className="text-left mt-3">
-                                <a href="#"><small className="reset">Password Reset</small></a>
-                            </div> */}
+                           
                         </Form>
                     </Col>
 

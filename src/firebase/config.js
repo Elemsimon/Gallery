@@ -22,9 +22,11 @@ const config = firebase.initializeApp(firebaseConfig);
   const projectStorage = firebase.storage();
   const projectFirestore = firebase.firestore();
   const timestamp = firebase.firestore.FieldValue.serverTimestamp;
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  export { projectStorage, projectFirestore, config, timestamp };
+  export { projectStorage, projectFirestore, config, timestamp, auth, db };
   
-  export const auth = firebase.auth();
+
   
   export default config;
