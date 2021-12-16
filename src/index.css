@@ -52,6 +52,9 @@ nav {
   padding-left: 75%;
   justify-content: space-between;
 }
+.right h6 {
+  
+}
 .right a {
   padding-right: 10px;
   color: var(--primary);

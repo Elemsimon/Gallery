@@ -20,7 +20,7 @@ const Title = ({handleLogout}) => {
       <nav>
         <h1 className="lift">FireGram</h1>
         <div className="right">
-          <h2>{user.fname} {user.lname}</h2>
+          <h6>{user.fname} {user.lname}</h6>
           <button onClick={handleLogout} className='logout'>Logout</button>
         </div>
       </nav>
